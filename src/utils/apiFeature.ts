@@ -3,7 +3,6 @@ import { Query } from 'mongoose';
 export interface QueryStr {
   keyword?: string; // only for searching
   page?: number;
-  limit?: number;
   category?: string;
 }
 
