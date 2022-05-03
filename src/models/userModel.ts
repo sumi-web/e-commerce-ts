@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const { Schema, model } = mongoose;
 
@@ -7,7 +9,7 @@ interface Avatar {
   url: String;
 }
 
-interface User {
+export interface User extends mongoose.Document {
   name: String;
   email: String;
   password: String;
@@ -15,6 +17,8 @@ interface User {
   role?: String;
   resetPassword?: String;
   resetPasswordExpire?: Date;
+  getJwtToken(): string;
+  comparePassword(password: string): boolean;
 }
 
 const UserSchema = new Schema<User>({
@@ -29,10 +33,7 @@ const UserSchema = new Schema<User>({
     unique: true,
     required: [true, 'email is required'],
     validate: {
-      validator: function (v: any) {
-        console.log('check the email section');
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-      },
+      validator: (v: unknown) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v as string),
       message: (props) => `${props.value} is not a valid email!`,
     },
   },
@@ -47,5 +48,24 @@ const UserSchema = new Schema<User>({
   resetPassword: String,
   resetPasswordExpire: Date,
 });
+
+UserSchema.pre('save', async function (next) {
+  // if pass gets modified then hash it otherwise keep it as it is
+  if (!this.isModified('password')) {
+    next();
+  }
+  this.password = await bcrypt.hash(this.password as string, 12);
+});
+
+// JWt Token
+UserSchema.methods.getJwtToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY as string, {
+    expiresIn: process.env.JWT_EXPIRE as string,
+  });
+};
+
+UserSchema.methods.comparePassword = async function (password: string) {
+  return await bcrypt.compare(password, this.password);
+};
 
 export const UserModel = model<User>('User', UserSchema);
