@@ -21,6 +21,7 @@ export interface Product {
   stock: number;
   numOfReviews: number;
   reviews: Types.DocumentArray<Reviews>;
+  user: Types.ObjectId;
 }
 
 const ProductSchema: Schema = new Schema<Product, Model<Product>>({
@@ -64,6 +65,11 @@ const ProductSchema: Schema = new Schema<Product, Model<Product>>({
       comment: { type: String, required: true },
     },
   ],
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
 
 export const ProductModel = model<Product>('Product', ProductSchema);

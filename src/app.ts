@@ -15,8 +15,8 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 //setting up routing middleware
-app.use('/api', productRoute);
-app.use('/api', userRoute);
+app.use('/api/v1', productRoute);
+app.use('/api/v1', userRoute);
 
 // middleware for errors
 app.use(errorMiddleWare);

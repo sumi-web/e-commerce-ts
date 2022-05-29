@@ -59,13 +59,15 @@ UserSchema.pre('save', async function (next) {
 
 // JWt Token
 UserSchema.methods.getJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY as string, {
-    expiresIn: process.env.JWT_EXPIRE as string,
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRE,
   });
 };
 
+// compare password
 UserSchema.methods.comparePassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
+// reset password
 export const UserModel = model<User>('User', UserSchema);

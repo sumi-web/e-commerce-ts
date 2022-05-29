@@ -47,3 +47,14 @@ export const loginUser = catchAsyncErrors(
     sendToken(user, 200, res);
   },
 );
+
+export const logoutUser = catchAsyncErrors(
+  async (_: Request, res: Response): Promise<Response | void> => {
+    res.clearCookie('token');
+
+    res.status(200).json({
+      success: true,
+      message: 'Logged Out',
+    });
+  },
+);

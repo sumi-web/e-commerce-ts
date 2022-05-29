@@ -7,7 +7,11 @@ import { ApiFeature, QueryStr } from '../utils/apiFeature';
 // create product --admin route sonly admin can access this
 export const createProduct = catchAsyncErrors(
   async (req: Request, res: Response): Promise<void> => {
-    const product = await ProductModel.create(req.body);
+    if (req.user) {
+      req.body.user = req.user.id;
+    }
+
+    const product = await await ProductModel.create(req.body);
     res.status(201).json({ success: true, product });
   },
 );
