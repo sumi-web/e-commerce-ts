@@ -4,7 +4,7 @@ import { ErrorHandler } from '../utils/errorHandler';
 import { catchAsyncErrors } from '../middlewares/catchAsyncErrors';
 import { ApiFeature, QueryStr } from '../utils/apiFeature';
 
-// create product --admin route sonly admin can access this
+// create product --admin access only
 export const createProduct = catchAsyncErrors(
   async (req: Request, res: Response): Promise<void> => {
     if (req.user) {
@@ -71,7 +71,7 @@ export const deleteProduct = catchAsyncErrors(
   },
 );
 
-// get single product detail --admin
+// get single product detail
 export const getProductDetail = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     const { productId } = req.params;
