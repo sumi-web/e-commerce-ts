@@ -130,3 +130,68 @@ export const resetPassword = catchAsyncErrors(
     sendToken(user, 200, res);
   },
 );
+
+// get user detail
+export const getUserDetails = catchAsyncErrors(
+  async (req: Request, res: Response): Promise<Response | void> => {
+    if (!!req.user) {
+      const user = await UserModel.findById(req.user.id);
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    }
+  },
+);
+
+// change user password
+export const changePassword = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (!!req.user) {
+      const { currentPassword, newPassword, confirmPassword } = req.body;
+
+      const user = await UserModel.findById(req.user.id).select('+password');
+
+      if (!user) {
+        return next(new ErrorHandler('User not found', 404));
+      }
+
+      //compare password
+      const isPassMatched = await user.comparePassword(currentPassword);
+
+      if (!isPassMatched) {
+        return next(new ErrorHandler('Current password is incorrect', 400));
+      }
+
+      if (newPassword !== confirmPassword) {
+        return next(new ErrorHandler('Password does not match', 400));
+      }
+
+      user.password = newPassword;
+      user.save();
+      sendToken(user, 200, res);
+    }
+  },
+);
+
+// update user profile
+export const updateProfile = catchAsyncErrors(async (req: Request, res: Response) => {
+  if (!!req.user) {
+    const { name, email } = req.body;
+
+    const newUserData = {
+      name,
+      email,
+    };
+
+    const user = await UserModel.findByIdAndUpdate(req.user.id, newUserData, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  }
+});
