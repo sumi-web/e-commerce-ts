@@ -72,7 +72,7 @@ export const deleteProduct = catchAsyncErrors(
 );
 
 // get single product detail
-export const getProductDetail = catchAsyncErrors(
+export const getProductDetails = catchAsyncErrors(
   async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     const { productId } = req.params;
 

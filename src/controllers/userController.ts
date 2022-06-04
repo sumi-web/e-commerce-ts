@@ -174,15 +174,14 @@ export const changePassword = catchAsyncErrors(
   },
 );
 
-// update user profile
+// update your user profile
 export const updateProfile = catchAsyncErrors(async (req: Request, res: Response) => {
   if (!!req.user) {
-    const { name, email } = req.body;
-
     const newUserData = {
-      name,
-      email,
+      ...req.body,
     };
+
+    // we will add cloudinary later
 
     const user = await UserModel.findByIdAndUpdate(req.user.id, newUserData, {
       new: true,
@@ -195,3 +194,78 @@ export const updateProfile = catchAsyncErrors(async (req: Request, res: Response
     });
   }
 });
+
+//  get all users -- admin
+export const getAllUsers = catchAsyncErrors(async (_req: Request, res: Response) => {
+  const allUsers = await UserModel.find({});
+
+  res.status(200).json({
+    success: true,
+    users: allUsers,
+  });
+});
+
+//  get single user -- admin
+export const getSingleUser = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params;
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return next(new ErrorHandler(`User does not exist with Id ${userId}`, 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  },
+);
+
+// update user profile -- Admin
+export const updateUserRole = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (!!req.user) {
+      const { userId } = req.params;
+      // we can change user role here too
+      const newUserData = {
+        ...req.body,
+      };
+
+      const user = await UserModel.findByIdAndUpdate(userId, newUserData, {
+        new: true,
+        runValidators: true,
+      });
+
+      if (!user) {
+        return next(new ErrorHandler(`User does not exist with Id ${userId}`, 404));
+      }
+
+      res.status(200).json({
+        success: true,
+      });
+    }
+  },
+);
+
+//  delete user -- Admin
+export const deleteUser = catchAsyncErrors(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { userId } = req.params;
+
+    // we will remove cloudinary later
+
+    const user = await UserModel.findByIdAndDelete(userId);
+    console.log('check the result here', user);
+
+    if (!user) {
+      return next(new ErrorHandler(`User does not exist with Id ${userId}`, 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'User deleted successfully',
+    });
+  },
+);
