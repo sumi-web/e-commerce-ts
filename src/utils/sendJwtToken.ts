@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { User } from '../models/userModel';
+import { IUser } from '../models/userModel';
 
-export const sendToken = (user: User, statusCode: number, res: Response) => {
+export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   const token = user.getJwtToken();
 
   // options for cookies

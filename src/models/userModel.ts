@@ -1,27 +1,27 @@
-import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
-const { Schema, model } = mongoose;
+import crypto from 'crypto';
+import { Schema, model, Document } from 'mongoose';
 
 interface Avatar {
-  public_id: String;
-  url: String;
+  public_id: string;
+  url: string;
 }
 
-export interface User extends mongoose.Document {
-  name: String;
-  email: String;
-  password: String;
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
   avatar: Avatar;
-  role?: String;
-  resetPassword?: String;
+  role?: string;
+  resetPassword?: string;
   resetPasswordExpire?: Date;
   getJwtToken(): string;
-  comparePassword(password: string): boolean;
+  comparePassword(password: string): Promise<boolean>;
+  getResetPasswordToken(): string;
 }
 
-const UserSchema = new Schema<User>({
+const UserSchema = new Schema<IUser>({
   name: {
     type: String,
     required: [true, 'Name can not be empty'],
@@ -69,5 +69,16 @@ UserSchema.methods.comparePassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
-// reset password
-export const UserModel = model<User>('User', UserSchema);
+// generating reset password token
+UserSchema.methods.getResetPasswordToken = function () {
+  //generate token
+  const resetToken = crypto.randomBytes(20).toString('hex');
+
+  // hashing and adding resetPasswordToken to userSchema
+  this.resetPassword = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+  this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+  return resetToken;
+};
+
+export const UserModel = model<IUser>('User', UserSchema);
