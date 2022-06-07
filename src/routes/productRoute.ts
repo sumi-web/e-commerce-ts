@@ -2,8 +2,11 @@ import express from 'express';
 
 import {
   createProduct,
+  createProductReview,
   deleteProduct,
+  deleteReview,
   getAllProducts,
+  getAllReviewsOfProduct,
   getProductDetails,
   updateProduct,
 } from '../controllers/productController';
@@ -24,5 +27,9 @@ router
   .delete(isAuthenticatedUser, authorizeRoles, deleteProduct);
 
 router.get('/product/:productId', getProductDetails);
+
+router.put('/review', isAuthenticatedUser, createProductReview);
+
+router.route('/reviews').get(getAllReviewsOfProduct).delete(isAuthenticatedUser, deleteReview);
 
 export { router };

@@ -1,21 +1,22 @@
-import { Schema, model, Model, Types } from 'mongoose';
+import { Schema, model, Model, Types, Document } from 'mongoose';
 
-interface Images {
+interface Images extends Document {
   public_id: string;
   url: string;
 }
 
-interface Reviews {
+export interface Reviews extends Document {
+  user: Types.ObjectId;
   name: string;
   rating: number;
   comment: string;
 }
 
-export interface Product {
+export interface Product extends Document {
   name: string;
   description: string;
   price: string;
-  rating: number;
+  ratings: number;
   images: Types.DocumentArray<Images>;
   category: string;
   stock: number;
@@ -39,7 +40,7 @@ const ProductSchema: Schema = new Schema<Product, Model<Product>>({
     required: [true, 'Please Enter product Price'],
     maxLength: [8, 'Price can not be exceed 8 characters'],
   },
-  rating: { type: Number, default: 0 },
+  ratings: { type: Number, default: 0 },
   images: [
     {
       public_id: { type: String, required: true },
@@ -60,6 +61,11 @@ const ProductSchema: Schema = new Schema<Product, Model<Product>>({
 
   reviews: [
     {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
       name: { type: String, required: true },
       rating: { type: Number, required: true },
       comment: { type: String, required: true },

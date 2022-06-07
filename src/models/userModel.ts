@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { Schema, model, Document } from 'mongoose';
 
-interface Avatar {
+interface Avatar extends Document {
   public_id: string;
   url: string;
 }
