@@ -1,4 +1,4 @@
-import { Schema, model, Model, Types, Document } from 'mongoose';
+import { Schema, model, Types, Document } from 'mongoose';
 
 interface Images extends Document {
   public_id: string;
@@ -25,7 +25,7 @@ export interface Product extends Document {
   user: Types.ObjectId;
 }
 
-const ProductSchema: Schema = new Schema<Product, Model<Product>>({
+const ProductSchema: Schema = new Schema<Product>({
   name: {
     type: String,
     required: [true, 'Please Enter product Name'],
