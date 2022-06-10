@@ -4,7 +4,7 @@ export interface OrderItems {
   name: string;
   price: number;
   quantity: number;
-  images: string;
+  image: string;
   product: Types.ObjectId;
 }
 
@@ -32,7 +32,7 @@ export interface Order {
   taxPrice: number;
   shippingPrice: number;
   totalPrice: number;
-  orderStatus: string;
+  orderStatus: 'Processing' | 'Shipped' | 'Delivered';
   deliveredAt: Date;
 }
 
@@ -80,7 +80,7 @@ const OrderSchema: Schema = new Schema<Order>(
           required: true,
         },
 
-        images: {
+        image: {
           type: String,
           required: true,
         },

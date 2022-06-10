@@ -17,6 +17,7 @@ declare global {
       COOKIE_EXPIRE: string;
       PORT: '5001' | '3001';
       LOCAL_DB_URL: string;
+      SERVER_DB_URL: STRING;
       JWT_SECRET_KEY: string;
       SMPT_SERVICE: string;
       SMPT_EMAIL: string;

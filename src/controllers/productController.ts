@@ -8,10 +8,10 @@ import { ApiFeature, QueryStr } from '../utils/apiFeature';
 export const createProduct = catchAsyncErrors(
   async (req: Request, res: Response): Promise<void> => {
     if (req.user) {
-      req.body.user = req.user.id;
+      req.body.user = req.user._id;
     }
 
-    const product = await await ProductModel.create(req.body);
+    const product = await ProductModel.create(req.body);
     res.status(201).json({ success: true, product });
   },
 );
@@ -59,7 +59,6 @@ export const deleteProduct = catchAsyncErrors(
     const { productId } = req.params;
 
     const product = await ProductModel.findById(productId).exec();
-    console.log('check product', product);
 
     if (!product) {
       return next(new ErrorHandler('Product not found', 404));
